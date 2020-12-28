@@ -20,31 +20,33 @@ SR_RS=zeros(length(SNRdB),N_channel);
 
 %% circulation
 for i_channel=1:N_channel
-   randn('seed',(i_channel)*3*N_user) 
-   %% channel realization
-   %Phase I
-   H_BC(:,:,1)=sqrt(bias_1)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %h1
-   H_BC(:,:,2)=sqrt(bias_2)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %h2
-   H_BC(:,:,3)=sqrt(bias_e_1)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %g1,g_1^{^},the estimation of g1
-
-   %Phase II
-   h3=norm(sqrt(bias_3)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT))); %h3
-   g2=norm(sqrt(bias_e_2)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT))); %g2,g_2^{^},the estimation of g2
-
-   %% Relay selection
-    if norm(H_BC(:,:,1)) >= norm(H_BC(:,:,2))
-        ind_relay=1;
-        fprintf('ind_relay=%1.0f \n',ind_relay);
-    else
-        ind_relay=2;
-        fprintf('ind_relay=%1.0f \n',ind_relay);
-    end
-       
-   for i_snr=1:length(SNRdB)
-      %% transmit power  
+    for i_snr=1:length(SNRdB)
+       randn('seed',(i_channel)*3*N_user) 
+       %% transmit power  
        Pt=10^(SNRdB(i_snr)/10);
        Pr=Pt;
        fprintf('i_channel=%1.0f,i_snr=%1.0f \n',[i_channel,i_snr]);
+   
+       %% channel realization
+       %Phase I
+       H_BC(:,:,1)=sqrt(bias_1)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %h1
+       H_BC(:,:,2)=sqrt(bias_2)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %h2
+       H_BC(:,:,3)=sqrt(bias_e_1)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT)); %g1,g_1^{^},the estimation of g1
+
+       %Phase II
+       h3=norm(sqrt(bias_3)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT))); %h3
+       g2=norm(sqrt(bias_e_2)/sqrt(2)*(randn(1,NT)+1i*randn(1,NT))); %g2,g_2^{^},the estimation of g2
+
+       %% Relay selection
+        if norm(H_BC(:,:,1)) >= norm(H_BC(:,:,2))
+            ind_relay=1;
+            fprintf('ind_relay=%1.0f \n',ind_relay);
+        else
+            ind_relay=2;
+            fprintf('ind_relay=%1.0f \n',ind_relay);
+        end
+       
+
 
         %% use yalmip
         %[SR_RS(i_snr,i_channel),SR_MU_LP(i_snr,i_channel),SR_NOMA(i_snr,i_channel)]= RS_SCA_rateRegion1(H_BC,h3,g2,Pt,Pr,ind_relay,tolerance);
